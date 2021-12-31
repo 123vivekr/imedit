@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="styles.css">
+    <title>Image Editor - Client Side Image Editor</title>
+  </head>
+  <body>
+    <script src="index.js"></script>
+    <div class="controls">
+      <input type='file' class="image-upload-button"/>
+      <form class="resize-form">
+        <label for="resize_width">Width:</label><br>
+        <input type="text" id="resize_width" name="resize_width"><br>
+        <label for="resize_height">Height:</label><br>
+        <input type="text" id="resize_height" name="resize_height"><br><br>
+        <button type="submit">Resize</button>
+      </form>
+    </div>
+    <div class="output">
+      <img id="img" src="#" class="output-image-display">
+    </div>
+  </body>
+</html>
