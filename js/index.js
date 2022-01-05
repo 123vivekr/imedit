@@ -33,17 +33,26 @@ function resize(image, width, height) {
     })
 }
 
+function compress(imageUint8ClampedArray) {
+    return new Uint8ClampedArray(lib.compress(imageUint8ClampedArray));
+}
+
+function displayOutputImage(imageUint8Array) {
+    var img = document.getElementById("output_image_display");
+    img.style.display = "block";
+    img.src = 'data:image/png;base64,' + encode(imageUint8Array);
+}
+
 (async () => {
     lib = await import("../pkg/index.js").catch(console.error);
 
     let image;
 
     window.addEventListener('load', function () {
-        document.querySelector('.resize-form').addEventListener("submit", function(event) {
-            event.preventDefault();
-
+        document.getElementById('run_button').onclick = function() {
             var width = parseInt(document.getElementById("resize_width").value);
             var height = parseInt(document.getElementById("resize_height").value);
+            var shouldCompress = document.getElementById("yes_radio").checked;
 
             // TODO: ensure width and height are positive integers
             if(width && height) {
@@ -52,17 +61,25 @@ function resize(image, width, height) {
 
                 // send image to resize function
                 resize(image, width, height).then((resizedImageUint8Array) => {
-                    // display ouput
-                    var img = document.querySelector("img");
-                    img.style.display = "block";
-                    img.src = 'data:image/png;base64,' + encode(resizedImageUint8Array);
+                    if(shouldCompress) {
+                        // send image to compress function
+                        displayOutputImage(compress(resizedImageUint8Array));
+                    } else {
+                        displayOutputImage(resizedImageUint8Array);
+                    }
                 });
             }
-        });
+        };
 
-        document.querySelector('.image-upload-button').addEventListener('change', function () {
+        document.getElementById('image-upload-button').addEventListener('change', function () {
             if (this.files && this.files[0]) {
                 image = this.files[0];
+                if (image.type !== "image/png") {
+                    window.alert("Only PNG format is supported.")
+                    image = null;
+                    return;
+                }
+                document.getElementById("image_details").innerHTML = "Image Type: " + image.type.split("/").pop().toUpperCase();
             }
         });
     });
