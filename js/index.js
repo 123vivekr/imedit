@@ -37,10 +37,24 @@ function compress(imageUint8ClampedArray) {
     return new Uint8ClampedArray(lib.compress(imageUint8ClampedArray));
 }
 
-function displayOutputImage(imageUint8Array) {
-    var img = document.getElementById("output_image_display");
-    img.style.display = "block";
-    img.src = 'data:image/png;base64,' + encode(imageUint8Array);
+function prepareDownloadButton(imageUint8Array, image_name, image_width, image_height) {
+    console.log("finished");
+
+    var base64encoded_image = encode(imageUint8Array);
+
+    const linkSource = `data:image/png;base64,${base64encoded_image}`;
+
+    var download_button = document.getElementById('download_button');
+    download_button.style.display = 'block';
+    download_button.classList.remove('invisible');
+    download_button.classList.add('visible');
+
+    download_button.addEventListener("click", function () {
+        const downloadLink = document.createElement("a");
+        downloadLink.href = linkSource;
+        downloadLink.download = image_name.replace(/\.[^/.]+$/, "") + "_" + image_width + 'x' + image_height + ".png";
+        downloadLink.click();
+    });
 }
 
 (async () => {
@@ -54,7 +68,6 @@ function displayOutputImage(imageUint8Array) {
             var height = parseInt(document.getElementById("resize_height").value);
             var shouldCompress = document.getElementById("yes_radio").checked;
 
-            // TODO: ensure width and height are positive integers
             if(width && height) {
                 // TODO: show spinning bar
                 console.log("loading");
@@ -63,9 +76,9 @@ function displayOutputImage(imageUint8Array) {
                 resize(image, width, height).then((resizedImageUint8Array) => {
                     if(shouldCompress) {
                         // send image to compress function
-                        displayOutputImage(compress(resizedImageUint8Array));
+                        prepareDownloadButton(compress(resizedImageUint8Array), image.name, width, height);
                     } else {
-                        displayOutputImage(resizedImageUint8Array);
+                        prepareDownloadButton(resizedImageUint8Array, image.name, width, height);
                     }
                 });
             }
