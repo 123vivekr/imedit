@@ -1,3 +1,5 @@
+let lib;
+
 // method for encoding an Uint8Array to base64
 function encode(input) {
     var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
